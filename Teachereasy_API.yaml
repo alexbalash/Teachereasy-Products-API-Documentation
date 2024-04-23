@@ -1,0 +1,249 @@
+openapi: 3.0.3
+info:
+  title: Teachereasy Products APIs 
+  description: |
+     This OpenAPI specification outlines the APIs provided by Teachereasy for accessing teacher and course information, as well as managing orders.
+  termsOfService: https://teachereasy.com/terms/
+  contact:
+    name: API Support
+    url: https://www.teachereasy.com/support
+    email: support@teachereasy.com
+  license:
+    name: Teachereasy License
+    url: https://www.teachereasy.com/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: https://development.teachereasy-server.com/v1
+    description: Development server
+paths:
+  /teachers:
+    get:
+      summary: List teachers
+      description: Retrieves a list of teachers available on Teachereasy.
+      parameters:
+        - name: teacherId
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+          example: 101
+      responses:
+        '200':
+          description: A list of teachers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    teacherId:
+                      type: integer
+                    name:
+                      type: string
+  /teachers/{teacherID}:
+    get:
+      summary: Get teacher
+      description: Retrieves information about a specific teacher by their ID.
+      parameters:
+        - name: teacherID
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+          example: 101
+      responses:
+        '200':
+          description: Teacher information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teacherId:
+                      type: integer
+                  name:
+                      type: string
+  /courses:
+    get:
+      summary: List courses
+      description: Retrieves a list of available courses. 
+      parameters:
+        - name: courseID
+          in: query 
+          schema:
+            type: integer
+          example: 23
+      responses:
+        '200':
+          description: A list of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    courseId:
+                      type: integer
+                    courseName:
+                      type: string
+                    teacherID:
+                       type: integer
+                    teacherName: 
+                      type: string
+  /courses/{courseID}:
+    get:
+      summary: Get course
+      description: Retrieves information about a specific course by its ID.
+      parameters:
+        - name: courseID
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 10
+      responses:
+        '200':
+          description: Course information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courseId:
+                      type: integer
+                  courseName:
+                      type: string
+  /orders:
+    post:
+      summary: Create order
+      description: |
+        Submits order details for processing
+        and shipping.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      courseId:
+                        type: integer
+                      courseName:
+                       type: string
+                      price:
+                        type: number
+                      teacherName:
+                        type: string
+                personalData:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    phoneNumber:
+                      type: string
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: integer
+    put:
+      summary: Update order
+      description: |
+        Updates order details for processing
+        and shipping.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderID:
+                  type: integer
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      courseId:
+                        type: integer
+                      courseName:
+                       type: string
+                      price:
+                        type: number
+                      teacherName:
+                        type: string
+                personalData:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    phoneNumber:
+                      type: string
+      responses:
+        '200':
+          description: Order updated successfully
+    delete:
+      summary: Delete order
+      description: Delete order details. 
+      parameters:
+        - name: orderId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Order details cancelled successfully
+    get:
+      summary: Get order
+      description: Retrieves order details.
+      parameters:
+        - name: orderID
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description:  Order details fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderID:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        courseId:
+                          type: integer
+                        courseName:
+                         type: string
+                        price:
+                          type: number
+                        teacherName:
+                          type: string
+                  personalData:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      phoneNumber:
+                        type: string

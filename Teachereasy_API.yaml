@@ -2,7 +2,11 @@ openapi: 3.0.3
 info:
   title: Teachereasy Products APIs 
   description: |
-     This OpenAPI specification outlines the APIs provided by Teachereasy for accessing teacher and course information, as well as managing orders.
+    # About us
+     This `OpenAPI` specification outlines the APIs provided by ***Teachereasy*** for accessing teacher and course information, as well as managing orders.
+    ## What's next
+     - authentication
+     - reusable components
   termsOfService: https://teachereasy.com/terms/
   contact:
     name: API Support
@@ -15,9 +19,18 @@ info:
 servers:
   - url: https://development.teachereasy-server.com/v1
     description: Development server
+tags:
+  - name: Teachers
+    description: Operations with teachers
+  - name: Courses
+    description: Operations with courses
+  - name: Orders
+    description: Operations with orders
 paths:
   /teachers:
     get:
+      tags: 
+        - Teachers
       summary: List teachers
       description: Retrieves a list of teachers available on Teachereasy.
       parameters:
@@ -27,7 +40,7 @@ paths:
             type: integer
             minimum: 1
             maximum: 1000
-          example: 101
+            example: 100
       responses:
         '200':
           description: A list of teachers
@@ -42,8 +55,25 @@ paths:
                       type: integer
                     name:
                       type: string
+              examples:
+                all-teachers-data:
+                  summary: Teachers example data
+                  value:
+                    - teacherId: 101
+                      name: Julia Ashew
+                    - teacherId: 202
+                      name: Frank Lop
+                    - teacherId: 56
+                      name: Miranda Regrow
+                single-teacher-data:
+                  summary: A single teacher example data
+                  value:
+                    - teacherId: 101
+                      name: Julia Ashew
   /teachers/{teacherID}:
     get:
+      tags: 
+        - Teachers
       summary: Get teacher
       description: Retrieves information about a specific teacher by their ID.
       parameters:
@@ -69,6 +99,8 @@ paths:
                       type: string
   /courses:
     get:
+      tags: 
+        - Courses
       summary: List courses
       description: Retrieves a list of available courses. 
       parameters:
@@ -93,10 +125,28 @@ paths:
                       type: string
                     teacherID:
                        type: integer
-                    teacherName: 
+                    name: 
                       type: string
+              examples:
+                courses-data:
+                  summary: Courses example data
+                  value:
+                    - courseId: 10
+                      courseName: Web Design
+                      teacherID: 202
+                      name: Frank Lop
+                    - courseId: 49
+                      courseName: Integrals
+                      teacherID: 101
+                      name: Julia Ashew
+                    - courseId: 40
+                      courseName: Collocations
+                      teacherID: 56
+                      name: Miranda Regrow
   /courses/{courseID}:
     get:
+      tags: 
+        - Courses
       summary: Get course
       description: Retrieves information about a specific course by its ID.
       parameters:
@@ -120,6 +170,8 @@ paths:
                       type: string
   /orders:
     post:
+      tags: 
+        - Orders
       summary: Create order
       description: |
         Submits order details for processing
@@ -148,6 +200,7 @@ paths:
                   properties:
                     address:
                       type: string
+                      description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
                     phoneNumber:
                       type: string
       responses:
@@ -161,6 +214,8 @@ paths:
                   orderId:
                     type: integer
     put:
+      tags: 
+        - Orders
       summary: Update order
       description: |
         Updates order details for processing
@@ -184,19 +239,22 @@ paths:
                        type: string
                       price:
                         type: number
-                      teacherName:
+                      name:
                         type: string
                 personalData:
                   type: object
                   properties:
                     address:
                       type: string
+                      description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
                     phoneNumber:
                       type: string
       responses:
         '200':
           description: Order updated successfully
     delete:
+      tags: 
+        - Orders
       summary: Delete order
       description: Delete order details. 
       parameters:
@@ -209,6 +267,8 @@ paths:
         '204':
           description: Order details cancelled successfully
     get:
+      tags: 
+        - Orders
       summary: Get order
       description: Retrieves order details.
       parameters:
@@ -238,12 +298,13 @@ paths:
                          type: string
                         price:
                           type: number
-                        teacherName:
+                        name:
                           type: string
                   personalData:
                     type: object
                     properties:
                       address:
                         type: string
+                        description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
                       phoneNumber:
                         type: string

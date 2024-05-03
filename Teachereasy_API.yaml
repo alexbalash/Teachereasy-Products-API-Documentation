@@ -70,6 +70,8 @@ paths:
                   value:
                     - teacherId: 101
                       name: Julia Ashew
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /teachers/{teacherID}:
     get:
       tags: 
@@ -97,6 +99,8 @@ paths:
                       type: integer
                   name:
                       type: string
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /courses:
     get:
       tags: 
@@ -143,6 +147,8 @@ paths:
                       courseName: Collocations
                       teacherID: 56
                       name: Miranda Regrow
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /courses/{courseID}:
     get:
       tags: 
@@ -162,12 +168,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  courseId:
-                      type: integer
-                  courseName:
-                      type: string
+                $ref: "#/components/schemas/course"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /orders:
     post:
       tags: 
@@ -185,24 +188,9 @@ paths:
                 products:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      courseId:
-                        type: integer
-                      courseName:
-                       type: string
-                      price:
-                        type: number
-                      teacherName:
-                        type: string
+                    $ref: "#/components/schemas/product"
                 personalData:
-                  type: object
-                  properties:
-                    address:
-                      type: string
-                      description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
-                    phoneNumber:
-                      type: string
+                  $ref: "#/components/schemas/personalData"
       responses:
         '201':
           description: Order created successfully
@@ -213,6 +201,8 @@ paths:
                 properties:
                   orderId:
                     type: integer
+        '500':
+          $ref: "#/components/responses/InternalServerError"
     put:
       tags: 
         - Orders
@@ -231,52 +221,33 @@ paths:
                 products:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      courseId:
-                        type: integer
-                      courseName:
-                       type: string
-                      price:
-                        type: number
-                      name:
-                        type: string
+                    $ref: "#/components/schemas/product"
                 personalData:
-                  type: object
-                  properties:
-                    address:
-                      type: string
-                      description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
-                    phoneNumber:
-                      type: string
+                  $ref: "#/components/schemas/personalData"
       responses:
         '200':
           description: Order updated successfully
+        '500':
+          $ref: "#/components/responses/InternalServerError"
     delete:
       tags: 
         - Orders
       summary: Delete order
       description: Delete order details. 
       parameters:
-        - name: orderId
-          in: query
-          required: true
-          schema:
-            type: integer
+        - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
         '204':
           description: Order details cancelled successfully
+        '500':
+          $ref: "#/components/responses/InternalServerError"
     get:
       tags: 
         - Orders
       summary: Get order
       description: Retrieves order details.
       parameters:
-        - name: orderID
-          in: query
-          required: true
-          schema:
-            type: integer
+        - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
         '200':
           description:  Order details fetched successfully
@@ -290,21 +261,47 @@ paths:
                   products:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        courseId:
-                          type: integer
-                        courseName:
-                         type: string
-                        price:
-                          type: number
-                        name:
-                          type: string
+                      $ref: "#/components/schemas/product"
                   personalData:
-                    type: object
-                    properties:
-                      address:
-                        type: string
-                        description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
-                      phoneNumber:
-                        type: string
+                    $ref: "#/components/schemas/personalData"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+components:
+  parameters:
+    orderIdQueryParam:
+      name: orderId
+      in: query
+      required: true
+      schema:
+          type: integer
+  schemas:
+    personalData:
+      type: object
+      properties:
+        address:
+          type: string
+          description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
+        phoneNumber:
+          type: string
+    product:
+      type: object
+      properties:
+        courseId:
+          type: integer
+        courseName:
+          type: string
+        price:
+          type: number
+        name:
+          type: string
+    course: 
+      type: object
+      properties:
+        courseId:
+          type: integer
+        courseName:
+          type: string
+  responses:
+    InternalServerError:
+      description: |
+        An error occured while processing the request.

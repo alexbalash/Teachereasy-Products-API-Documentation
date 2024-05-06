@@ -283,6 +283,14 @@ components:
           description: Contains information about a <u>physical location</u>, such as the country, city, street name, and street number.
         phoneNumber:
           type: string
+        isOfficeAddress: 
+          type: boolean
+        country:
+          type: string
+          enum:
+            - Germany
+            - Canada
+            - Brazil
     product:
       type: object
       properties:
@@ -292,6 +300,11 @@ components:
           type: string
         price:
           type: number
+          format: float
+        releaseDate:
+          type: string
+          format: date
+          readOnly: true
         name:
           type: string
     course: 
@@ -304,4 +317,4 @@ components:
   responses:
     InternalServerError:
       description: |
-        An error occured while processing the request.
+        An error occurred while processing the request.

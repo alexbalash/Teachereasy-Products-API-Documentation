@@ -266,6 +266,59 @@ paths:
                     $ref: "#/components/schemas/personalData"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /oneOfOrder:
+    post:
+      tags:
+      - Orders
+      summary: Insert OneOf the order details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: object
+                  oneOf:
+                    - $ref: '#/components/schemas/slides'
+                    - $ref: '#/components/schemas/tests'
+                address:
+                  $ref: '#/components/schemas/personalData'
+              required:
+                - products
+                - address
+      responses:
+        '200':
+          description: Order placed successfully
+  /anyOfOrder:
+    get:
+      tags:
+      - Orders
+      summary: Get order details
+      description: Get order details based on order ID
+      parameters:
+        - $ref: "#/components/parameters/orderIdQueryParam"
+        - name: fetchType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - summary
+              - details
+          description: >
+            Fetch type:
+             * `summary` - provides order summary
+             * `details` - provides order summary & order address
+      responses:
+        '200':
+          description: Return product details
+          content:
+            application/json:
+              schema:
+               anyOf:
+                - $ref: '#/components/schemas/orderSummary'
+                - $ref: '#/components/schemas/orderAddress'  
 components:
   parameters:
     orderIdQueryParam:
@@ -314,7 +367,36 @@ components:
           type: integer
         courseName:
           type: string
+    slides:
+      allOf:
+        - $ref: "#/components/schemas/product"
+        - type: object
+          properties:
+            slidesName:
+              type: string
+            slidesLenght:
+              type: number
+          required: [slidesName]
+    tests:
+      allOf:
+        - $ref: "#/components/schemas/product"
+        - type: object
+          properties:
+            testName:
+              type: string
+    orderSummary:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/product'
+    orderAddress:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/personalData'
   responses:
     InternalServerError:
       description: |
-        An error occurred while processing the request.
+        An error occured while processing the request.

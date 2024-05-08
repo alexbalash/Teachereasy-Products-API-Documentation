@@ -8,6 +8,13 @@ info:
      - authentication
      - reusable components
   termsOfService: https://teachereasy.com/terms/
+  x-custom-info:
+    comment: Some comments
+    developers:
+      - name: John Doe
+        email: john@doe.com
+      - name: Jane Doe
+        email: jane@doe.com
   contact:
     name: API Support
     url: https://www.teachereasy.com/support
@@ -16,6 +23,9 @@ info:
     name: Teachereasy License
     url: https://www.teachereasy.com/licenses/LICENSE-2.0.html
   version: 0.0.1
+externalDocs:
+  description: External Documentation
+  url: https://example.com
 servers:
   - url: https://development.teachereasy-server.com/v1
     description: Development server
@@ -33,6 +43,7 @@ paths:
         - Teachers
       summary: List teachers
       description: Retrieves a list of teachers available on Teachereasy.
+      operationId: getTeachers
       parameters:
         - name: teacherId
           in: query
@@ -78,6 +89,7 @@ paths:
         - Teachers
       summary: Get teacher
       description: Retrieves information about a specific teacher by their ID.
+      operationId: getTeacherDetails
       parameters:
         - name: teacherID
           in: path
@@ -106,7 +118,8 @@ paths:
       tags: 
         - Courses
       summary: List courses
-      description: Retrieves a list of available courses. 
+      description: Retrieves a list of available courses.
+      operationId: getCourses
       parameters:
         - name: courseID
           in: query 
@@ -155,6 +168,7 @@ paths:
         - Courses
       summary: Get course
       description: Retrieves information about a specific course by its ID.
+      operationId: getCourseDetails
       parameters:
         - name: courseID
           in: path
@@ -179,6 +193,7 @@ paths:
       description: |
         Submits order details for processing
         and shipping.
+      operationId: saveOrderDetails
       requestBody:
         content:
           application/json:
@@ -201,6 +216,9 @@ paths:
                 properties:
                   orderId:
                     type: integer
+          links:
+            GetOrderByOrderId:
+              $ref: '#/components/links/GetOrderByOrderId'
         '500':
           $ref: "#/components/responses/InternalServerError"
     put:
@@ -210,6 +228,7 @@ paths:
       description: |
         Updates order details for processing
         and shipping.
+      operationId: updateOrderDetails
       requestBody:
         content:
           application/json:
@@ -234,6 +253,7 @@ paths:
         - Orders
       summary: Delete order
       description: Delete order details. 
+      operationId: deleteOrderDetails
       parameters:
         - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
@@ -246,6 +266,7 @@ paths:
         - Orders
       summary: Get order
       description: Retrieves order details.
+      operationId: getOrderDetails
       parameters:
         - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
@@ -266,11 +287,39 @@ paths:
                     $ref: "#/components/schemas/personalData"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /orders/{orderId}:
+    get:
+      tags:
+        - Orders
+      summary: Get order details
+      operationId: getOrderDetailsUsingPathParam
+      deprecated: true
+      parameters:
+        - $ref: "#/components/parameters/orderIdPathParam"
+      responses:
+        '200':
+          description: Fetched order details successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  orderId:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/product"
+                  address:
+                    $ref: "#/components/schemas/personalData"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /oneOfOrder:
     post:
       tags:
       - Orders
       summary: Insert OneOf the order details
+      operationId: demoOfOneOf
       requestBody:
         content:
           application/json:
@@ -296,6 +345,7 @@ paths:
       - Orders
       summary: Get order details
       description: Get order details based on order ID
+      operationId: demoOfAnyOf
       parameters:
         - $ref: "#/components/parameters/orderIdQueryParam"
         - name: fetchType
@@ -327,6 +377,12 @@ components:
       required: true
       schema:
           type: integer
+    orderIdPathParam:
+      name: orderId
+      in: path
+      required: true
+      schema:
+        type: integer
   schemas:
     personalData:
       type: object
@@ -400,3 +456,10 @@ components:
     InternalServerError:
       description: |
         An error occured while processing the request.
+  links:
+    GetOrderByOrderId:
+      description: >
+        The `orderId` value returned in the response can be used as input parameter in `GET /orders`.
+      operationId: getProductDetails
+      parameters:
+        orderId: '$response.body#/orderId'
